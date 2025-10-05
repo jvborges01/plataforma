@@ -1,0 +1,33 @@
+appId: com.jvborges01.mapon
+productName: MapOn
+directories:
+  buildResources: build
+files:
+  - "**/*"
+  - "!node_modules/.cache"
+extraResources:
+  - images/
+  - leaflet/
+  - geojson/
+  - scripts/
+  - markers.json
+  - meu-arquivo.mbtiles
+
+win:
+  target:
+    - nsis
+    - zip
+  icon: build/icon.ico
+
+mac:
+  target:
+    - dmg
+    - zip
+  icon: build/icon.icns
+
+linux:
+  target:
+    - AppImage
+    - deb
+  icon: build/255x256.png
+  category: Utility

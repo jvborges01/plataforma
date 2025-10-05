@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>Search Map</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data: blob: https:; style-src 'self' 'unsafe-inline' https:; script-src 'self' 'unsafe-inline' https:;">
+
+    <link rel="stylesheet"  href ="./leaflet/leaflet.css" />
+    <script src="./leaflet/leaflet.js"></script>
+  <style>
+     body {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    margin: 0;
+    height:100vh;
+    width: 100vw;
+    background-color: rgb(63, 63, 63);
+    }
+    #map { 
+      height:90vh;
+      width: 90vw;
+      border-radius: 10px;
+      border-radius: 10px;
+    }
+    #map[data-fullscreen="true"] {
+     width: 100vw;
+    height: 100vh;
+    }
+    #buttons{
+      position: absolute;
+      width: 100px;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      top: 80px;
+      z-index: 401;
+      margin-left: 10px;
+      justify-content: space-around;
+      cursor: pointer;
+    }
+  
+    #results{
+       position: absolute;
+       display: none;
+       flex-direction: column;
+      bottom: 50px;
+       height: 100px;
+       width: 290px;
+       z-index: 1000;
+       left: 9px;
+       border-radius: 2px;
+       background-color: rgba(255, 255, 255, 0.596);
+       overflow-y: scroll;
+      scroll-behavior: auto;
+      outline: 2px solid rgb(114, 113, 113);
+    }
+    #results span:hover{
+      background-color: rgba(194, 193, 193, 0.596);
+      border-radius: 2px;
+    }
+    #results span{
+      margin: 6px;
+      padding: 2px;
+    }
+    #input_search{
+      width: 300px;
+      position: absolute;
+      bottom: 20px;
+       margin-left: 10px;
+      z-index: 401;
+      display: none;
+       border: none;
+       border-radius: 2px;
+       outline: 2px solid rgb(114, 113, 113);
+       
+    }
+    #buttons img{
+      border: 2px solid silver;
+      border-radius: 3px;
+    }
+    #info{
+      display: flex;
+      flex-direction: column;
+      color: white;
+      font-family:monospace ;
+      font-weight: bold;
+      font-size: 14px;
+      margin-top: 10px;
+    }
+    #info span{
+      margin: 5px;
+    }
+    .leaflet-popup-content {
+  font-size: 13px;      /* aumenta o tamanho */
+  font-family: "Courier New", monospace;
+  font-weight: bold;    /* negrito */    /* cor do texto */
+   background-color: rgba(255, 255, 255, 0.87);
+}
+
+/* Tooltip */
+.leaflet-tooltip , #results{
+  font-size: 12px;
+  font-family: "Courier New", monospace;
+  border-radius: 5px;
+  padding: 4px 8px;
+}
+.leaflet-tooltip{
+  background-color: rgba(255, 255, 255, 0.877);
+}
+   @media (max-width: 406px) {
+  #map {
+    width: 90vw;
+    height: 40vh; 
+    padding: 10px;
+  }
+}
+
+
+#scroll-container {
+  display: block;
+  width: 100px;
+  height: 50px;
+
+}
+.scroll-page {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  font-size: 3;
+}
+
+
+.leaflet-container {
+   font-family: "Courier New", monospace;
+			height: 400px;
+			width: 600px;
+			max-width: 100%;
+			max-height: 100%;
+		}
+/* Quando o checkbox estiver marcado */
+.leaflet-control-layers-selector:checked + ::before {
+  background-color: #4CAF50; /* cor do check */
+  border-color: #4CAF50;
+}
+  </style>
+</head>
+<body>
+  <span id="local"></span>
+  <div id="map">
+    <div id="buttons">
+    <img src="./images/alvo.png" width="30px" id="alvo">
+    <img src="./images/expandir.png" width="30px" id="expandir">
+    <img src="./images/search.png" width="30px" id="search">
+    </div>
+  <div id="box_results">
+ <div id="results"></div>
+ <input type="search" id="input_search" value="">
+  </div>
+</div>
+
+
+
+<!-- <div id="scroll-container">
+  <div class="scroll-page" >1</div>
+  <div  class="scroll-page" >2</div>
+  <div  class="scroll-page" >3</div>
+</div> -->
+  <script type="module" src="./leaflet/turf.min.js"></script>
+  <script type="module" src="./index.js"></script>
+<script type="module" src="./scripts/controls.js"></script>
+<script type="module" src="./scripts/ruas.js"></script>
+<script type="module" src="./scripts/pois.js"></script>
+<script type="module" src="./scripts/icons.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,74 @@
+{
+  "name": "mapa",
+  "version": "1.0.0",
+  "description": "Sistema de busca e navegação de imóveis",
+  "main": "main.js",
+  "type": "module",
+  "author": {
+    "name": "João Victor Fialho",
+    "email": "jvctborges@gmail.com"
+  },
+  "license": "ISC",
+  "homepage": "https://github.com/jvborges01/plataforma",
+
+  "scripts": {
+    "start": "electron-forge start",
+    "package": "electron-forge package",
+    "make": "electron-forge make",
+    "build:win": "electron-builder --win",
+    "build:mac": "electron-builder --mac",
+    "build:linux": "electron-builder --linux"
+  },
+
+  "build": {
+    "appId": "com.jvborges01.mapon",
+    "productName": "MapOn",
+    "directories": {
+      "buildResources": "build"
+    },
+    "files": [
+      "**/*",
+      "!node_modules/.cache"
+    ],
+    "extraResources": [
+      "images/",
+      "leaflet/",
+      "geojson/",
+      "scripts/",
+      "markers.json",
+      "meu-arquivo.mbtiles"
+    ],
+    "win": {
+      "target": ["nsis", "zip"],
+      "icon": "build/icon.ico"
+    },
+    "mac": {
+      "target": ["dmg", "zip"],
+      "icon": "build/icon.icns"
+    },
+    "linux": {
+      "target": ["AppImage", "deb"],
+      "icon": "build/255x256.png",
+      "category": "Utility"
+    }
+  },
+
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^5.1.0",
+    "mime": "^4.1.0"
+  },
+
+  "devDependencies": {
+    "@electron-forge/cli": "^7.9.0",
+    "@electron-forge/maker-deb": "^7.9.0",
+    "@electron-forge/maker-rpm": "^7.9.0",
+    "@electron-forge/maker-squirrel": "^7.9.0",
+    "@electron-forge/maker-zip": "^7.9.0",
+    "@electron-forge/plugin-auto-unpack-natives": "^7.9.0",
+    "@electron-forge/plugin-fuses": "^7.9.0",
+    "@electron/fuses": "^1.8.0",
+    "electron": "^38.2.1",
+    "electron-builder": "^24.13.3"
+  }
+}

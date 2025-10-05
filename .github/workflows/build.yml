@@ -12,7 +12,8 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
+        # APENAS Windows e Linux
+        os: [ubuntu-latest, windows-latest] 
 
     steps:
       - name: Checkout repository
@@ -26,19 +27,26 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Build app for ${{ matrix.os }}
-        run: |
-          npx electron-builder --${{ matrix.os == 'windows-latest' && 'win' || matrix.os == 'macos-latest' && 'mac' || 'linux' }}
+      - name: Build app (Electron Forge)
+        # Assumindo que você usa o script 'make' ou 'package' do Electron Forge
+        # O Electron Forge usa a plataforma do runner para saber o que buildar.
+        run: npm run make 
+        # NOTA: Se você realmente usa o electron-builder, mantenha seu comando original:
+        # run: npx electron-builder --${{ matrix.os == 'windows-latest' && 'win' || 'linux' }}
 
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: MapOn-${{ matrix.os }}
+          # É uma boa prática usar um nome de artefato que reflita a plataforma.
+          name: MapOn-${{ matrix.os }} 
           path: |
-            dist/
+            # Caminho de saída padrão do Electron Forge/Builder.
+            out/
+            dist/ 
             release/
 
   release:
+    # A etapa de release só deve ser executada se todos os builds foram bem-sucedidos.
     needs: build
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main'
@@ -47,7 +55,8 @@ jobs:
       - name: Download build artifacts
         uses: actions/download-artifact@v4
         with:
-          path: builds
+          # Isso baixará todos os artefatos de build (Linux e Windows)
+          path: builds 
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
@@ -56,6 +65,6 @@ jobs:
           name: "MapOn v${{ github.run_number }}"
           draft: false
           prerelease: false
-          files: builds/**
-        env:
+          # O ** baixará todos os arquivos em todas as subpastas criadas.
+          files: builds/** env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

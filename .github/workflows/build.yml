@@ -50,17 +50,27 @@ jobs:
             release/
 
   release:
-    # ...
+    # A etapa de release só deve ser executada se todos os builds foram bem-sucedidos.
+    needs: build
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+
     steps:
-      # ...
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          # Isso baixará todos os artefatos de build (Linux e Windows)
+          path: builds 
+
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          # Use github.ref para obter o nome da tag que disparou a ação (refs/tags/v1.0.6)
-          tag_name: ${{ github.ref }} 
-          # O nome visível do release
-          name: Release ${{ github.ref_name }} # Usa apenas o nome (ex: v1.0.6)
+          tag_name: ${{ github.ref }}
+          name: Release ${{ github.ref_name }}
           draft: false
           prerelease: false
-          files: builds/** env:
+          # LINHA 65 (APROXIMADA): Esta chave precisa de 10 espaços (ou 5 tabs)
+          files: builds/** # A CHAVE 'env:' PRECISA ESTAR AQUI: Alinhada com 'with:' (8 espaços ou 4 tabs)
+        env:
+          # A CHAVE 'GITHUB_TOKEN' precisa estar aqui (10 espaços ou 5 tabs)
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

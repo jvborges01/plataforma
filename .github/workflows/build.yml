@@ -65,12 +65,12 @@ jobs:
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: ${{ github.ref }}
-          name: Release ${{ github.ref_name }}
+          # TROQUE DE github.ref PARA github.ref_name
+          tag_name: ${{ github.ref_name }} 
+          # Use github.ref_name para o nome do release também, se quiser
+          name: Release ${{ github.ref_name }} 
           draft: false
           prerelease: false
-          # LINHA 65 (APROXIMADA): Esta chave precisa de 10 espaços (ou 5 tabs)
-          files: builds/** # A CHAVE 'env:' PRECISA ESTAR AQUI: Alinhada com 'with:' (8 espaços ou 4 tabs)
-        env:
-          # A CHAVE 'GITHUB_TOKEN' precisa estar aqui (10 espaços ou 5 tabs)
+          files: builds/**
+          env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

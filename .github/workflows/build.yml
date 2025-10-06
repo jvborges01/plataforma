@@ -31,7 +31,13 @@ jobs:
         run: npm ci
 
       - name: Clean previous builds
-        run: rm -rf out dist release
+        shell: bash
+        run: |
+          if [[ "$RUNNER_OS" == "Windows" ]]; then
+            powershell -Command "Remove-Item -Recurse -Force out, dist, release -ErrorAction SilentlyContinue"
+          else
+            rm -rf out dist release || true
+          fi
 
       - name: Build app (Electron Forge)
         run: npm run make
@@ -61,34 +67,4 @@ jobs:
 
       - name: Create a unique tag
         id: tag
-        run: echo "tag=v${GITHUB_RUN_NUMBER}-$(date +'%Y%m%d%H%M%S')" >> $GITHUB_OUTPUT
-
-      - name: Ensure no conflicting release or tag exists
-        continue-on-error: true
-        run: |
-          gh release delete ${{ steps.tag.outputs.tag }} -y || echo "No existing release"
-          git tag -d ${{ steps.tag.outputs.tag }} || true
-          git push origin :refs/tags/${{ steps.tag.outputs.tag }} || true
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Create release (delay to ensure deletion is done)
-        run: sleep 5
-
-      - name: Create GitHub Release
-        id: create_release
-        uses: softprops/action-gh-release@v2
-        with:
-          tag_name: ${{ steps.tag.outputs.tag }}
-          name: "MapOn ${{ steps.tag.outputs.tag }}"
-          draft: false
-          prerelease: false
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Upload artifacts to release
-        run: |
-          echo "Uploading build files to release..."
-          gh release upload ${{ steps.tag.outputs.tag }} builds/** --clobber
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: echo "tag=v${GITHUB_RUN_NUMBER}-$(date +'%Y%

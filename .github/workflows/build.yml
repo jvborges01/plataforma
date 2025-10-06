@@ -58,7 +58,7 @@ jobs:
 
       - name: Create a unique tag for this build
         id: tag
-        run: echo "tag=v${GITHUB_RUN_NUMBER}-$(date +'%Y%m%d%H%M%S')" >> $GITHUB_OUTPUT
+        run: echo "tag=build-${GITHUB_RUN_ID}" >> $GITHUB_OUTPUT
 
       - name: Delete release with same tag (if exists)
         continue-on-error: true

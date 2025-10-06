@@ -2,12 +2,10 @@ name: Build and Release Electron App
 
 on:
   push:
-    # DISPARA APENAS QUANDO UMA TAG É ENVIADA (PARA RELEASES)
+    # Combina os gatrigos de branch e tag em um único bloco 'push'
+    branches: [ main ]
     tags:
       - 'v*'
-  # Mantém os gatilhos originais para testes em branches
-  push:
-    branches: [ main ]
   pull_request:
     branches: [ main ]
   workflow_dispatch:
@@ -15,6 +13,8 @@ on:
 permissions:
   contents: write
   packages: write
+
+# ... o resto do seu workflow (jobs: build e jobs: release) ..
 
 jobs:
   build:

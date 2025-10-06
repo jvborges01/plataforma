@@ -7,6 +7,10 @@ on:
     branches: [ main ]
   workflow_dispatch:
 
+permissions:
+  contents: write # ESSA É A PERMISSÃO NECESSÁRIA PARA CRIAR RELEASES
+  packages: write # Boa prática se você for usar o GitHub Packages
+  
 jobs:
   build:
     runs-on: ${{ matrix.os }}

@@ -51,13 +51,27 @@ jobs:
       - name: Download build artifacts
         uses: actions/download-artifact@v4
         with:
-          path: builds
+          path: builds 
+
+      - name: List downloaded files
+        run: ls -R builds
+
+      - name: Create a unique tag for this build
+        id: tag
+        run: echo "tag=v${GITHUB_RUN_NUMBER}-$(date +'%Y%m%d%H%M%S')" >> $GITHUB_OUTPUT
+
+      - name: Delete release with same tag (if exists)
+        continue-on-error: true
+        run: |
+          gh release delete ${{ steps.tag.outputs.tag }} -y || true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: v${{ github.run_number }}-${{ github.run_id }}
-          name: "MapOn v${{ github.run_number }}"
+          tag_name: ${{ steps.tag.outputs.tag }}
+          name: "MapOn ${{ steps.tag.outputs.tag }}"
           draft: false
           prerelease: false
           files: builds/**

@@ -58,12 +58,14 @@ jobs:
 
       - name: Create a unique tag for this build
         id: tag
-        run: echo "tag=build-${GITHUB_RUN_ID}" >> $GITHUB_OUTPUT
+        run: echo "tag=v${GITHUB_RUN_NUMBER}-$(date +'%Y%m%d%H%M%S')" >> $GITHUB_OUTPUT
 
-      - name: Delete release with same tag (if exists)
+      - name: Delete existing release if it exists
         continue-on-error: true
         run: |
-          gh release delete ${{ steps.tag.outputs.tag }} -y || true
+          gh release delete ${{ steps.tag.outputs.tag }} -y || echo "No previous release"
+          git tag -d ${{ steps.tag.outputs.tag }} || true
+          git push origin :refs/tags/${{ steps.tag.outputs.tag }} || true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 

@@ -2,6 +2,11 @@ name: Build and Release Electron App
 
 on:
   push:
+    # DISPARA APENAS QUANDO UMA TAG É ENVIADA (PARA RELEASES)
+    tags:
+      - 'v*'
+  # Mantém os gatilhos originais para testes em branches
+  push:
     branches: [ main ]
   pull_request:
     branches: [ main ]
@@ -32,12 +37,7 @@ jobs:
 
       - name: Clean previous builds
         shell: bash
-        run: |
-          if [[ "$RUNNER_OS" == "Windows" ]]; then
-            powershell -Command "Remove-Item -Recurse -Force out, dist, release -ErrorAction SilentlyContinue"
-          else
-            rm -rf out dist release || true
-          fi
+        run: rm -rf out dist release || true # Simplificado para funcionar em ambos (o runner Windows pode usar Bash)
 
       - name: Build app (Electron Forge)
         run: npm run make
@@ -45,7 +45,7 @@ jobs:
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: MapOn-${{ matrix.os }}-${{ github.run_number }}
+          name: MapOn-${{ matrix.os }}
           path: |
             out/
             dist/
@@ -54,7 +54,8 @@ jobs:
   release:
     needs: build
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main'
+    # Apenas executa se o evento que disparou foi o push de uma tag.
+    if: startsWith(github.ref, 'refs/tags/') 
 
     steps:
       - name: Download all build artifacts
@@ -62,9 +63,15 @@ jobs:
         with:
           path: builds
 
-      - name: List downloaded files
-        run: ls -R builds
-
-      - name: Create a unique tag
-        id: tag
-        run: echo "tag=v${GITHUB_RUN_NUMBER}-$(date +'%Y%
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          # Usa o nome da tag enviada (ex: v1.0.9)
+          tag_name: ${{ github.ref_name }} 
+          name: Release ${{ github.ref_name }}
+          draft: false
+          prerelease: false
+          # Anexa todos os arquivos baixados
+          files: builds/**
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

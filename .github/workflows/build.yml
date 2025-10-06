@@ -65,6 +65,6 @@ jobs:
           name: "MapOn v${{ github.run_number }}"
           draft: false
           prerelease: false
-          # O ** baixará todos os arquivos em todas as subpastas criadas.
-          files: builds/** env:
+          files: builds/** # 'env:' deve estar no mesmo nível de 'with:' (dois espaços à esquerda de 'with:')
+        env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

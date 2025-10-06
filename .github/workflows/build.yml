@@ -8,16 +8,15 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write # ESSA É A PERMISSÃO NECESSÁRIA PARA CRIAR RELEASES
-  packages: write # Boa prática se você for usar o GitHub Packages
+  contents: write
+  packages: write
   
 jobs:
   build:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        # APENAS Windows e Linux
-        os: [ubuntu-latest, windows-latest] 
+        os: [ubuntu-latest, windows-latest]
 
     steps:
       - name: Checkout repository
@@ -32,25 +31,18 @@ jobs:
         run: npm ci
 
       - name: Build app (Electron Forge)
-        # Assumindo que você usa o script 'make' ou 'package' do Electron Forge
-        # O Electron Forge usa a plataforma do runner para saber o que buildar.
-        run: npm run make 
-        # NOTA: Se você realmente usa o electron-builder, mantenha seu comando original:
-        # run: npx electron-builder --${{ matrix.os == 'windows-latest' && 'win' || 'linux' }}
+        run: npm run make
 
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
         with:
-          # É uma boa prática usar um nome de artefato que reflita a plataforma.
-          name: MapOn-${{ matrix.os }} 
+          name: MapOn-${{ matrix.os }}
           path: |
-            # Caminho de saída padrão do Electron Forge/Builder.
             out/
-            dist/ 
+            dist/
             release/
 
   release:
-    # A etapa de release só deve ser executada se todos os builds foram bem-sucedidos.
     needs: build
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main'
@@ -59,18 +51,15 @@ jobs:
       - name: Download build artifacts
         uses: actions/download-artifact@v4
         with:
-          # Isso baixará todos os artefatos de build (Linux e Windows)
-          path: builds 
+          path: builds
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          # TROQUE DE github.ref PARA github.ref_name
-          tag_name: ${{ github.ref_name }} 
-          # Use github.ref_name para o nome do release também, se quiser
-          name: Release ${{ github.ref_name }} 
+          tag_name: v${{ github.run_number }}
+          name: "MapOn v${{ github.run_number }}"
           draft: false
           prerelease: false
           files: builds/**
-          env:
+        env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
